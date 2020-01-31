@@ -5,6 +5,8 @@
 // @description use video as page background
 // @include     https://*
 // @include     http://*
+// @exclude     https://www.google.*/*
+// @exclude     https://www.baidu.com/*
 // @version     1.0
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
@@ -29,8 +31,8 @@ var dirCount=0;
 setUserPref(
     'urlRoot',
     host+'******',
-    'Set host url',
-    `Enter url from HFS.(.mp4 or folder)`,
+    'Set root url',
+    `Url from HFS.(.mp4 or dir)`,
     ','
 );
 
