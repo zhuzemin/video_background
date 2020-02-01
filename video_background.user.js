@@ -8,7 +8,19 @@
 // @exclude     https://www.google.*/*
 // @exclude     https://www.baidu.com/*
 // @exclude     https://anime1.me/*
-// @version     1.3
+// @exclude     https://*.jpg
+// @exclude     https://*.gif
+// @exclude     https://*.png
+// @exclude     http://*.jpg
+// @exclude     http://*.gif
+// @exclude     http://*.png
+// @exclude     http://*.mp4
+// @exclude     https://*.mp4
+// @exclude     http://*.swf
+// @exclude     https://*.swf
+// @exclude     http://*.pdf
+// @exclude     https://*.pdf
+// @version     1.4
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -30,6 +42,8 @@ var dirList;
 var urlRoot;
 var usedList=[];
 var dirCount=0;
+var hostname;
+var textColorList;
 // prepare UserPrefs
 setUserPref(
     'urlRoot',
@@ -73,10 +87,27 @@ var init = function () {
             dirList=[];
         }
         debug(dirList);
-        var lastTime=GM_getValue('lastTime')||0;
+        var blackList=GM_getValue('blackList');
+        if(blackList!=undefined){
+            blackList=JSON.parse(blackList);
+        }
+        else {
+            blackList=[];
+        }
+        debug(blackList);
+        textColorList=GM_getValue('textColorList');
+        if(textColorList!=undefined){
+            textColorList=JSON.parse(textColorList);
+        }
+        else {
+            textColorList=[];
+        }
+        debug(textColorList);
+
+        /*var lastTime=GM_getValue('lastTime')||0;
         var present=parseInt(new Date(). getTime()/1000);
         debug(present-parseInt(lastTime));
-        /*if(present-parseInt(lastTime)>86400){
+        if(present-parseInt(lastTime)>86400){
             videoList=[];
             dirList=[];
             GM_setValue('lastTime',present);
@@ -84,16 +115,10 @@ var init = function () {
             GM_setValue('dirList',JSON.stringify(dirList));
         }*/
         if(urlRoot!=null){
-            var btn=document.createElement('button');
-            btn.innerHTML='Text BG-color';
-            btn.style=`
-  position: fixed;
-  left: 0px;
-  top: 0px;
-  z-index: 1000;
-  `;
+            hostname=getLocation(window.location.href).hostname;
             var status=false;
-            btn.addEventListener('click',function () {
+            CreateButton('Text BG-color',function () {
+                var index = textColorList.indexOf(hostname);
                 var aList=document.querySelectorAll('a');
                 if(!status){
 
@@ -101,47 +126,88 @@ var init = function () {
                         a.style.backgroundColor='#ffffff';
                     }
                     status=true;
+                    if (!index > -1) {
+                        textColorList.push(hostname);
+                    }
                 }
                 else{
                     for (var a of aList){
                         a.style.backgroundColor='';
                     }
                     status=false;
+                    if (index > -1) {
+
+                        textColorList.splice(index, 1);
+                    }
 
                 }
+                GM_setValue('textColorList',JSON.stringify(textColorList));
 
-            });
-            document.body.insertBefore(btn,document.body.firstChild);
-            var btn_clearFileList=document.createElement('button');
-            btn_clearFileList.innerHTML='Clear file list';
-            btn_clearFileList.style=`
-  position: fixed;
-  left: 170px;
-  top: 0px;
-  z-index: 1000;
-  `;
-            btn_clearFileList.addEventListener('click',function () {
+            },0);
+            CreateButton('Clear file list',function () {
                 dirList=[];
                 videoList=[];
                 GM_setValue('videoList',JSON.stringify(videoList));
                 GM_setValue('dirList',JSON.stringify(dirList));
-            });
-            document.body.insertBefore(btn_clearFileList,document.body.firstChild);
-            urlRoot=urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//,host);
-            if(/\.mp4$/.test(urlRoot)){
-                insertVideo(urlRoot);
-            }
-            else {
-                var obj=new ObjectRequest(urlRoot);
-                request(obj,HandleHFS);
-                debug(urlRoot);
+            },36);
 
-            }
+            CreateButton('Add/Del Black List',function (e) {
+                var msg;
+                   var index = blackList.indexOf(hostname);
+                   if (index > -1) {
+                       blackList.splice(index, 1);
+                       msg='Del Success';
+                   }
+                   else {
+                       blackList.push(hostname);
+                       msg='Add Success';
+                   }
+                   GM_setValue('blackList',JSON.stringify(blackList));
+                e.target.innerHTML=msg;
+                   setTimeout(function () {
+                       e.target.innerHTML='Add/Del Black List';
+                   },1000);
+            },72);
+            if(!blackList.includes(hostname)) {
+                urlRoot = urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//, host);
+                if (/\.mp4$/.test(urlRoot)) {
+                    insertVideo(urlRoot);
+                }
+                else {
+                    var obj = new ObjectRequest(urlRoot);
+                    request(obj, HandleHFS);
+                    debug(urlRoot);
 
+                }
+            }
         }
 
     }
 }
+
+function CreateButton(text,func,positionTop){
+    var btn=document.createElement("button");
+    btn.type="button";
+    btn.onclick="";
+    btn.innerHTML=text;
+    btn.style=`
+  position: fixed;
+  left: 0px;
+  top: `+positionTop+`px;
+  z-index: 1000;
+  opacity:0.1;
+  `;
+    btn.addEventListener('click',func);
+    btn.addEventListener('mouseout',function () {
+        btn.style.opacity=0.1;
+
+    });
+    btn.addEventListener('mouseover',function () {
+        btn.style.opacity=1;
+    });
+    document.body.insertBefore(btn,document.body.firstChild);
+}
+
 
 function HandleHFS(responseObj){
     if(responseObj.status==200){
@@ -202,6 +268,17 @@ function HandleHFS(responseObj){
 
             if (tr==trList[trList.length-1]&&dirCount==0) {
                     videoShuffle();
+                if (textColorList.includes(hostname)) {
+                    var aList=document.querySelectorAll('a');
+                    for (var a of aList){
+                        a.style.backgroundColor='#ffffff';
+                    }
+                }
+                else {
+                    for (var a of aList){
+                        a.style.backgroundColor='';
+                    }
+                }
             }
         }
         dirCount--;
