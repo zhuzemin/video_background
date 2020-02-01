@@ -84,7 +84,7 @@ var init = function () {
         var btn=document.createElement('button');
         btn.innerHTML='Text background-color';
         btn.style=`
-  position: absolute;
+  position: fixed;
   left: 0px;
   top: 0px;
   z-index: 1000;

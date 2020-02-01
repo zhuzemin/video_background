@@ -33,3 +33,5 @@ the file list will be stored 24 hours.
 ![03](https://github.com/zhuzemin/video_background/raw/master/2020-02-01_060303.jpg)
 
 ![04](https://github.com/zhuzemin/video_background/raw/master/2020-02-01_062904.jpg)
+
+![05](https://github.com/zhuzemin/video_background/raw/master/Screenshot-2020-2-2.jpg)
