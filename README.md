@@ -19,8 +19,12 @@ Usage:
 2: copy the Url show in HFS, 
 3: Paste it to this userscript setting: "Set root url", 
 4: refresh page.
+5: if the background video makes text unrecognizable, there have a Button on the top, will give all Text white BG-color.
 
-*you may set HFS start with windows
+*script will loop through all sub folder, randomly play, so just need set root folder.
+*you may set HFS start with windows.
+*for best performance, script will not check file every time open web page, 
+the file list will be stored 24 hours.
 
 ![01](https://github.com/zhuzemin/video_background/raw/master/Screenshot-2020-2-1.jpg)
 

@@ -1,4 +1,4 @@
-﻿// ==UserScript==
+// ==UserScript==
 // @name        video_background
 // @namespace   video_background
 // @supportURL  https://github.com/zhuzemin
@@ -7,7 +7,8 @@
 // @include     http://*
 // @exclude     https://www.google.*/*
 // @exclude     https://www.baidu.com/*
-// @version     1.0
+// @exclude     https://anime1.me/*
+// @version     1.1
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -19,12 +20,14 @@
 // @connect-src 127.0.0.1
 // ==/UserScript==
 var config = {
-    'debug': false
+    'debug':false
 }
 var debug = config.debug ? console.log.bind(console)  : function () {
 };
 var host='http://127.0.0.1/';
-var videoList=[];
+var videoList;
+var dirList;
+var urlRoot;
 var usedList=[];
 var dirCount=0;
 // prepare UserPrefs
@@ -53,8 +56,59 @@ class ObjectRequest{
 }
 
 var init = function () {
-    var urlRoot=GM_getValue('urlRoot')||null;
+    urlRoot=GM_getValue('urlRoot')||null;
+    videoList=GM_getValue('videoList');
+    if(videoList!=undefined){
+        videoList=JSON.parse(videoList);
+    }
+    else {
+        videoList=[];
+    }
+    dirList=GM_getValue('dirList');
+    if(dirList!=undefined){
+        dirList=JSON.parse(dirList);
+    }
+    else {
+        dirList=[];
+    }
+    debug(dirList);
+    var lastTime=GM_getValue('lastTime')||0;
+    var present=parseInt(new Date(). getTime()/1000);
+    debug(present-parseInt(lastTime));
+    if(present-parseInt(lastTime)>500000){
+        videoList=[];
+        dirList=[];
+        GM_setValue('lastTime',present);
+    }
     if(urlRoot!=null){
+        var btn=document.createElement('button');
+        btn.innerHTML='Text background-color';
+        btn.style=`
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 1000;
+  `;
+        var status=false;
+        btn.addEventListener('click',function () {
+            var aList=document.querySelectorAll('a');
+            if(!status){
+
+                for (var a of aList){
+                    a.style.backgroundColor='#ffffff';
+                }
+                status=true;
+            }
+            else{
+                for (var a of aList){
+                    a.style.backgroundColor='';
+                }
+                status=false;
+
+            }
+            
+        });
+        document.body.insertBefore(btn,document.body.firstChild);
         urlRoot=urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//,host);
         if(/\.mp4$/.test(urlRoot)){
             insertVideo(urlRoot);
@@ -71,33 +125,63 @@ var init = function () {
 
 function HandleHFS(responseObj){
     if(responseObj.status==200){
+        if(dirCount!=0){
+
+            dirCount--;
+        }
         debug('dirCount: '+dirCount);
         var dom = new DOMParser().parseFromString(responseObj.responseText, "text/html");
         var files = dom.querySelector('#files');
         var trList=files.querySelectorAll("tr");
         for(var tr of trList){
-            if (!(tr==trList[trList.length-1]&&dirCount==1)) {
                 var a=tr.querySelector('a');
-                debug(a.textContent);
-                var url=a.href.replace("http://",'').replace("https://",'').replace(getLocation(window.location.href).hostname+"/", responseObj.finalUrl);
-                if(/\.mp4$/.test(a.textContent)){
+                debug('a.href: '+a.href);
+                var url=a.href.replace(/https?:\/\/.*\/([^\/]*((\.mp4)|\/)$)/, function(match, $1, $2, offset, original){ return responseObj.finalUrl+$1;})
+            debug('url: '+url);
+                if(/\.mp4$/.test(a.textContent)&&!videoList.includes(url)){
                     videoList.push(url);
+                    GM_setValue('videoList',JSON.stringify(videoList));
                 }
                 else if(a.textContent!='Name'){
                     var img=a.querySelector('img');
                     debug(img.src);
                     if(img.src.includes('/~img_folder')){
-                        dirCount++;
-                        //var url=dirList.push(responseObj.finalUrl+a.href);
-                        var obj=new ObjectRequest(url);
-                        request(obj,HandleHFS);
+                        if(dirList.length!=0){
+                            debug(dirList)
+                            for(var existUrl of dirList){
+                                if(existUrl.includes(url)){
+                                    break;
+                                }
+                                else if(existUrl==dirList[dirList.length-1]){
+                                    debug('existUrl: '+existUrl+' & '+'url: '+url);
+                                    dirCount++;
+                                    var obj=new ObjectRequest(url);
+                                    dirList.push(url);
+                                    GM_setValue('dirList',JSON.stringify(dirList));
+                                    request(obj,HandleHFS);
+
+
+
+                                }
+                            }
+
+                        }
+                        else {
+                            dirCount++;
+                            dirList.push(url);
+                            GM_setValue('dirList',JSON.stringify(dirList));
+                            var obj=new ObjectRequest(url);
+                            request(obj,HandleHFS);
+
+                        }
+
                     }
 
                 }
 
-            }
-            else {
-                videoShuffle();
+
+            if (tr==trList[trList.length-1]&&dirCount==0) {
+                    videoShuffle();
             }
         }
         dirCount--;
@@ -117,7 +201,7 @@ function request(object,func) {
         timeout:120000,
         //synchronous: true
         onload: function (responseDetails) {
-            debug(responseDetails);
+            //debug(responseDetails);
             if (responseDetails.status != 200&&responseDetails.status != 302) {
                 // retry
                 if (retries--) {          // *** Recurse if we still have retries
@@ -160,6 +244,7 @@ function setUserPref(varName, defaultVal, menuText, promtText, sep){
     });
 }
 function videoShuffle() {
+    debug('videoList: '+videoList);
     for(var used of usedList){
 
         var index = videoList.indexOf(used);
@@ -167,12 +252,13 @@ function videoShuffle() {
            videoList.splice(index, 1);
         }
     }
-    var randomNum = Math.floor(Math.random() * (videoList.length+1 - 0));
+    var randomNum = Math.floor(Math.random() * (videoList.length - 0));
     var url=videoList[randomNum];
     insertVideo(url);
 
 }
 function insertVideo(url) {
+    debug('insertVideo');
             var video = document.createElement("video");
             video.style = 'width:100%';
             video.src = url;
@@ -181,6 +267,7 @@ function insertVideo(url) {
             var div = document.createElement("div");
             div.style = "width:100%;    position: fixed;    top: 0;    left: 0;    z-index: -100;";
             div.insertBefore(video, null);
+            debug(url);
             document.body.insertBefore(div, null);
 
             window.addEventListener("focus", function () {
