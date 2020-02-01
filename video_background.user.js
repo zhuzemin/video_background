@@ -8,7 +8,7 @@
 // @exclude     https://www.google.*/*
 // @exclude     https://www.baidu.com/*
 // @exclude     https://anime1.me/*
-// @version     1.1
+// @version     1.3
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -56,67 +56,87 @@ class ObjectRequest{
 }
 
 var init = function () {
-    urlRoot=GM_getValue('urlRoot')||null;
-    videoList=GM_getValue('videoList');
-    if(videoList!=undefined){
-        videoList=JSON.parse(videoList);
-    }
-    else {
-        videoList=[];
-    }
-    dirList=GM_getValue('dirList');
-    if(dirList!=undefined){
-        dirList=JSON.parse(dirList);
-    }
-    else {
-        dirList=[];
-    }
-    debug(dirList);
-    var lastTime=GM_getValue('lastTime')||0;
-    var present=parseInt(new Date(). getTime()/1000);
-    debug(present-parseInt(lastTime));
-    if(present-parseInt(lastTime)>500000){
-        videoList=[];
-        dirList=[];
-        GM_setValue('lastTime',present);
-    }
-    if(urlRoot!=null){
-        var btn=document.createElement('button');
-        btn.innerHTML='Text background-color';
-        btn.style=`
+    if (window.self === window.top){
+        urlRoot=GM_getValue('urlRoot')||null;
+        videoList=GM_getValue('videoList');
+        if(videoList!=undefined){
+            videoList=JSON.parse(videoList);
+        }
+        else {
+            videoList=[];
+        }
+        dirList=GM_getValue('dirList');
+        if(dirList!=undefined){
+            dirList=JSON.parse(dirList);
+        }
+        else {
+            dirList=[];
+        }
+        debug(dirList);
+        var lastTime=GM_getValue('lastTime')||0;
+        var present=parseInt(new Date(). getTime()/1000);
+        debug(present-parseInt(lastTime));
+        /*if(present-parseInt(lastTime)>86400){
+            videoList=[];
+            dirList=[];
+            GM_setValue('lastTime',present);
+            GM_setValue('videoList',JSON.stringify(videoList));
+            GM_setValue('dirList',JSON.stringify(dirList));
+        }*/
+        if(urlRoot!=null){
+            var btn=document.createElement('button');
+            btn.innerHTML='Text BG-color';
+            btn.style=`
   position: fixed;
   left: 0px;
   top: 0px;
   z-index: 1000;
   `;
-        var status=false;
-        btn.addEventListener('click',function () {
-            var aList=document.querySelectorAll('a');
-            if(!status){
+            var status=false;
+            btn.addEventListener('click',function () {
+                var aList=document.querySelectorAll('a');
+                if(!status){
 
-                for (var a of aList){
-                    a.style.backgroundColor='#ffffff';
+                    for (var a of aList){
+                        a.style.backgroundColor='#ffffff';
+                    }
+                    status=true;
                 }
-                status=true;
+                else{
+                    for (var a of aList){
+                        a.style.backgroundColor='';
+                    }
+                    status=false;
+
+                }
+
+            });
+            document.body.insertBefore(btn,document.body.firstChild);
+            var btn_clearFileList=document.createElement('button');
+            btn_clearFileList.innerHTML='Clear file list';
+            btn_clearFileList.style=`
+  position: fixed;
+  left: 170px;
+  top: 0px;
+  z-index: 1000;
+  `;
+            btn_clearFileList.addEventListener('click',function () {
+                dirList=[];
+                videoList=[];
+                GM_setValue('videoList',JSON.stringify(videoList));
+                GM_setValue('dirList',JSON.stringify(dirList));
+            });
+            document.body.insertBefore(btn_clearFileList,document.body.firstChild);
+            urlRoot=urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//,host);
+            if(/\.mp4$/.test(urlRoot)){
+                insertVideo(urlRoot);
             }
-            else{
-                for (var a of aList){
-                    a.style.backgroundColor='';
-                }
-                status=false;
+            else {
+                var obj=new ObjectRequest(urlRoot);
+                request(obj,HandleHFS);
+                debug(urlRoot);
 
             }
-            
-        });
-        document.body.insertBefore(btn,document.body.firstChild);
-        urlRoot=urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//,host);
-        if(/\.mp4$/.test(urlRoot)){
-            insertVideo(urlRoot);
-        }
-        else {
-            var obj=new ObjectRequest(urlRoot);
-            request(obj,HandleHFS);
-            debug(urlRoot);
 
         }
 

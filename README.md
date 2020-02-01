@@ -9,7 +9,7 @@ don't worry, unless you open Port(80) in your Router, otherwise this Http Server
 and HFS is very easy to use, you can download from official site: https://www.rejetto.com/hfs/?f=dl
 
 and don't worry about slow down you compute, the video will pause when you switch Tab or Minimize Window,
-just like playng youtube~
+performance cause just like playing youtube.
 
 My personal opinion: the effect are unexpected, my screen shot may not look like so, because it's not moving.
 
@@ -23,8 +23,8 @@ Usage:
 
 *script will loop through all sub folder, randomly play, so just need set root folder.
 *you may set HFS start with windows.
-*for best performance, script will not check file every time open web page, 
-the file list will be stored 24 hours.
+*for best performance, script will store searched file list,
+if you want refresh file list: click Button "Clear file list", then refresh page.
 
 ![01](https://github.com/zhuzemin/video_background/raw/master/Screenshot-2020-2-1.jpg)
 
