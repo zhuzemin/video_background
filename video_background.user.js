@@ -17,7 +17,7 @@
 // @exclude     https://*.swf
 // @exclude     http://*.pdf
 // @exclude     https://*.pdf
-// @version     1.81
+// @version     1.82
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -139,6 +139,7 @@ var init = function () {
 
                     for (var div of divList) {
                         div.style.backgroundColor = bgColor;
+                        div.style.opacity=0.8;
                     }
                     status = true;
                     if (!index > -1) {
@@ -539,6 +540,7 @@ function videoShuffle(func) {
         var divList=document.querySelectorAll('div');
         for (var div of divList){
             div.style.backgroundColor=bgColor;
+            div.style.opacity=0.9;
         }
     }
 
