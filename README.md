@@ -22,7 +22,7 @@ then:
 2: copy the Url show in HFS, 
 3: Paste it to this userscript setting: "Set root url", 
 4: refresh page.
-5: if the background video makes text unrecognizable, there have a Button on top, will give all Text BG-color.
+5: if the background video makes text unrecognizable, there have a Button on bottom, will give all Text BG-color.
 
 
 
@@ -30,7 +30,7 @@ in case 2 youtube playlist:
 1: Paste youtube playlist url to this userscript setting: "Set youtube playlist", 
 (url look like: "https://www.youtube.com/playlist?list=PLmlTcWwPyp188O1lK2fyYA_WFckZNrb0b")
 2: refresh page.
-5: if the background video makes text unrecognizable, there have a Button on top, will give all Text BG-color.
+5: if the background video makes text unrecognizable, there have a Button on bottom, will give all Text BG-color.
 
 
 

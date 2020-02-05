@@ -17,7 +17,7 @@
 // @exclude     https://*.swf
 // @exclude     http://*.pdf
 // @exclude     https://*.pdf
-// @version     1.7
+// @version     1.8
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -29,7 +29,7 @@
 // @connect-src 127.0.0.1
 // ==/UserScript==
 var config = {
-    'debug':false
+    'debug':true
 }
 var debug = config.debug ? console.log.bind(console)  : function () {
 };
@@ -305,18 +305,29 @@ var init = function () {
 
     }
 }
-function CreateButton(text,func,positionTop){
+function CreateButton(text,func,positionBtm){
     var btn=document.createElement("button");
     btn.type="button";
     btn.onclick="";
     btn.innerHTML=text;
     btn.style=`
   position: fixed;
-  left: 0px;
-  top: `+positionTop+`px;
+  right: 0px;
+  bottom: `+positionBtm+`px;
   z-index: 10000;
   opacity:0.1;
   `;
+    if(positionBtm!=0&&positionBtm!=36){
+        btn.style.display='none';
+        document.body.firstChild.addEventListener('mouseover',function () {
+            btn.style.display='block';
+        });
+        document.body.firstChild.addEventListener('mouseout',function () {
+            setTimeout(function () {
+                btn.style.display='none';
+            },3000);
+        });
+    }
     btn.addEventListener('click',func);
     btn.addEventListener('mouseout',function () {
         btn.style.opacity=0.1;
