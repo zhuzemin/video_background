@@ -17,7 +17,7 @@
 // @exclude     https://*.swf
 // @exclude     http://*.pdf
 // @exclude     https://*.pdf
-// @version     1.8
+// @version     1.81
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -350,12 +350,6 @@ function HandleHFS(responseObj) {
             }
         }
         videoShuffle(insertVideo);
-        if (textColorList.includes(hostname)) {
-            var divList=document.querySelectorAll('div');
-            for (var div of divList){
-                div.style.backgroundColor=bgColor;
-            }
-        }
     }
 }
 /*
@@ -541,6 +535,12 @@ function videoShuffle(func) {
 
     }*/
     func(url);
+    if (textColorList.includes(hostname)) {
+        var divList=document.querySelectorAll('div');
+        for (var div of divList){
+            div.style.backgroundColor=bgColor;
+        }
+    }
 
 }
 function insertVideo(url) {
