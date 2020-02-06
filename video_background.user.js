@@ -35,7 +35,7 @@
 // @connect-src 127.0.0.1
 // ==/UserScript==
 var config = {
-    'debug':true
+    'debug':false
 }
 var debug = config.debug ? console.log.bind(console)  : function () {
 };
@@ -66,6 +66,13 @@ setUserPref(
     `Youtube Playlist url`,
     ','
 );
+setUserPref(
+    'textBGcolorOpacity',
+    '0.95',
+    'Set Text BG-Color Opacity',
+    `Opacity: `,
+    ','
+);
 
 class ObjectRequest{
     constructor(url) {
@@ -85,6 +92,13 @@ class ObjectRequest{
 
 var init = function () {
     if (window.self === window.top || window.location.href.includes('https://www.youtube.com/embed/')) {
+        textBGcolorOpacity = GM_getValue('textBGcolorOpacity');
+        if (textBGcolorOpacity == undefined || textBGcolorOpacity == '') {
+            textBGcolorOpacity = 0.92;
+        }
+        else{
+            textBGcolorOpacity=parseFloat(textBGcolorOpacity);
+        }
         ytbEnable = GM_getValue('ytbEnable');
         if (ytbEnable != undefined) {
             if (ytbEnable == 'true') {
@@ -145,7 +159,7 @@ var init = function () {
 
                     for (var div of divList) {
                         div.style.backgroundColor = bgColor;
-                        div.style.opacity=0.8;
+                        div.style.opacity=textBGcolorOpacity;
                     }
                     status = true;
                     if (!index > -1) {
@@ -546,7 +560,7 @@ function videoShuffle(func) {
         var divList=document.querySelectorAll('div');
         for (var div of divList){
             div.style.backgroundColor=bgColor;
-            div.style.opacity=0.9;
+            div.style.opacity=textBGcolorOpacity;
         }
     }
 
