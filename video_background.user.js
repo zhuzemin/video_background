@@ -1,7 +1,13 @@
 // ==UserScript==
 // @name        video_background
+// @name:zh-CN         video_background
+// @name:zh-TW         video_background
+// @name:ja        video_background
 // @namespace   video_background
 // @supportURL  https://github.com/zhuzemin
+// @description:zh-CN  use video as page background
+// @description:zh-TW  use video as page background
+// @description:ja  use video as page background
 // @description use video as page background
 // @include     https://*
 // @include     http://*
@@ -166,7 +172,7 @@ var init = function () {
                 ytbList = [];
                 GM_setValue('videoList', videoList);
                 GM_setValue('dirList', dirList);
-                GM_setValue('videoList', ytbList);
+                GM_setValue('ytbList', ytbList);
             }, 72);
 
             CreateButton('Add/Del Block List', function (e) {
