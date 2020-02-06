@@ -23,7 +23,7 @@
 // @exclude     https://*.swf
 // @exclude     http://*.pdf
 // @exclude     https://*.pdf
-// @version     1.82
+// @version     1.83
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
