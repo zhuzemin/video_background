@@ -11,19 +11,13 @@
 // @description use video as page background
 // @include     https://*
 // @include     http://*
-// @exclude     https://*.jpg
-// @exclude     https://*.gif
-// @exclude     https://*.png
-// @exclude     http://*.jpg
-// @exclude     http://*.gif
-// @exclude     http://*.png
-// @exclude     http://*.mp4
-// @exclude     https://*.mp4
-// @exclude     http://*.swf
-// @exclude     https://*.swf
-// @exclude     http://*.pdf
-// @exclude     https://*.pdf
-// @version     1.83
+// @exclude     *://*.jpg
+// @exclude     *://*.gif
+// @exclude     *://*.png
+// @exclude     *://*.mp4
+// @exclude     *://*.swf
+// @exclude     *://*.pdf
+// @version     1.84
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -68,7 +62,7 @@ setUserPref(
 );
 setUserPref(
     'textBGcolorOpacity',
-    '0.95',
+    '0.92',
     'Set Text BG-Color Opacity',
     `Opacity: `,
     ','
@@ -169,6 +163,7 @@ var init = function () {
                 else {
                     for (var div of divList) {
                         div.style.backgroundColor = '';
+                        div.style.opacity=1;
                     }
                     status = false;
                     if (index > -1) {
