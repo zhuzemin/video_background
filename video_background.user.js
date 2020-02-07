@@ -17,7 +17,7 @@
 // @exclude     *://*.mp4
 // @exclude     *://*.swf
 // @exclude     *://*.pdf
-// @version     1.84
+// @version     1.9
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -60,13 +60,13 @@ setUserPref(
     `Youtube Playlist url`,
     ','
 );
-setUserPref(
+/*setUserPref(
     'textBGcolorOpacity',
-    '0.92',
+    '0.95',
     'Set Text BG-Color Opacity',
     `Opacity: `,
     ','
-);
+);*/
 
 class ObjectRequest{
     constructor(url) {
@@ -88,7 +88,7 @@ var init = function () {
     if (window.self === window.top || window.location.href.includes('https://www.youtube.com/embed/')) {
         textBGcolorOpacity = GM_getValue('textBGcolorOpacity');
         if (textBGcolorOpacity == undefined || textBGcolorOpacity == '') {
-            textBGcolorOpacity = 0.92;
+            textBGcolorOpacity = 0.95;
         }
         else{
             textBGcolorOpacity=parseFloat(textBGcolorOpacity);
@@ -153,7 +153,7 @@ var init = function () {
 
                     for (var div of divList) {
                         div.style.backgroundColor = bgColor;
-                        div.style.opacity=textBGcolorOpacity;
+                        //div.style.opacity=textBGcolorOpacity;
                     }
                     status = true;
                     if (!index > -1) {
@@ -555,7 +555,7 @@ function videoShuffle(func) {
         var divList=document.querySelectorAll('div');
         for (var div of divList){
             div.style.backgroundColor=bgColor;
-            div.style.opacity=textBGcolorOpacity;
+            //div.style.opacity=textBGcolorOpacity;
         }
     }
 
