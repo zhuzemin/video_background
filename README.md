@@ -3,7 +3,7 @@ Firefox/Chrome,
 Greasemonkey/Tampermonkey
 
 This script play video as background in web page.
-*don't worry about slow down you computer, video will pause when you switch Tab or Minimize Window,
+don't worry about slow down you computer, video will pause when you switch Tab or Minimize Window,
 performance cause just like playing youtube.
 
 
@@ -22,7 +22,6 @@ then:
 2: copy the Url show in HFS, 
 3: Paste it to this userscript setting: "Set root url", 
 4: refresh page.
-5: if the background video makes text unrecognizable, there have a Button on bottom, will give all Text BG-color.
 
 
 
@@ -30,19 +29,15 @@ in case 2 youtube playlist:
 1: Paste youtube playlist url to this userscript setting: "Set youtube playlist", 
 (url look like: "https://www.youtube.com/playlist?list=PLmlTcWwPyp188O1lK2fyYA_WFckZNrb0b")
 2: refresh page.
-5: if the background video makes text unrecognizable, there have a Button on bottom, will give all Text BG-color.
 
-
-
-
-and about this userscript isn't useful, my personal opinion: the effect are unexpected, my screen shot may not look like so, because it's not moving.
 
 
 Notice:
+*if the background video makes text unrecognizable, there have a Button on bottom, will give all Text BG-color.
 *script will loop through all sub folder, play randomly , so just need set root folder.
 *for best performance, after first use, script will store file list(or youtube url),
 if you want refresh file list: click Button "Clear file list", then refresh page.
-
+*if you are using firefox, need set Cache to 1024(max), otherwise after while use, will not play video anymore(need restart firefox)
 
 ![01](https://github.com/zhuzemin/video_background/raw/master/Screenshot-2020-2-1.jpg)
 

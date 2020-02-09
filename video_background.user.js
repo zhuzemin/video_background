@@ -17,7 +17,7 @@
 // @exclude     *://*.mp4
 // @exclude     *://*.swf
 // @exclude     *://*.pdf
-// @version     1.9
+// @version     1.91
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -583,7 +583,7 @@ function insertVideo(url) {
                 document.removeChild(div);
                 videoShuffle(insertVideo);
             });
-            window.addEventListener('load', (event) => {
+            video.addEventListener('loadeddata', (event) => {
                 var randomNum = Math.floor(Math.random() * (video.duration - 0));
                 video.currentTime=randomNum;
             });
