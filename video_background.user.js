@@ -17,7 +17,8 @@
 // @exclude     *://*.mp4
 // @exclude     *://*.swf
 // @exclude     *://*.pdf
-// @version     1.91
+// @exclude     https://anime1.me
+// @version     1.93
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -115,22 +116,31 @@ var init = function () {
         if (videoList == undefined || videoList == '') {
             videoList = [];
         }
-        dirList = GM_getValue('dirList');
+        /*dirList = GM_getValue('dirList');
         if (dirList == undefined || dirList == '') {
             dirList = [];
         }
-        debug(dirList);
+        debug(dirList);*/
         var blockList = GM_getValue('blockList');
-        debug(blockList);
         if (blockList == undefined || blockList == '') {
             blockList = [];
         }
-        debug(blockList);
+        else {
+            blockList= blockList.filter(function(item, pos) {
+                return blockList.indexOf(item) == pos;
+            })
+        }
+        debug('blockList: '+blockList);
         textColorList = GM_getValue('textColorList');
         if (textColorList == undefined || textColorList == '') {
             textColorList = [];
         }
-        debug(textColorList);
+        else {
+            textColorList= textColorList.filter(function(item, pos) {
+                return textColorList.indexOf(item) == pos;
+            })
+        }
+        debug('textColorList: '+textColorList);
 
         /*var lastTime=GM_getValue('lastTime')||0;
         var present=parseInt(new Date(). getTime()/1000);
@@ -145,33 +155,26 @@ var init = function () {
         if (!window.location.href.includes('https://www.youtube.com/embed/')) {
 
             hostname = getLocation(window.location.href).hostname;
-            var status = false;
             CreateButton('Text BG-color', function () {
                 var index = textColorList.indexOf(hostname);
                 var divList = document.querySelectorAll('div');
-                if (!status) {
+                if (index == -1) {
 
                     for (var div of divList) {
                         div.style.backgroundColor = bgColor;
                         //div.style.opacity=textBGcolorOpacity;
                     }
-                    status = true;
-                    if (!index > -1) {
                         textColorList.push(hostname);
-                    }
                 }
                 else {
                     for (var div of divList) {
                         div.style.backgroundColor = '';
-                        div.style.opacity=1;
+                        //div.style.opacity=1;
                     }
-                    status = false;
-                    if (index > -1) {
-
-                        textColorList.splice(index, 1);
-                    }
+                    textColorList.splice(index, 1);
 
                 }
+                debug('textColorList: '+textColorList);
                 GM_setValue('textColorList', textColorList);
 
             }, 36);
@@ -223,7 +226,7 @@ var init = function () {
                 if (urlRoot != null && !ytbEnable) {
                     urlRoot = urlRoot.replace(/http:\/\/\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\//, host);
                     if (/\.mp4$/.test(urlRoot)) {
-                        insertVideo(insertVideo);
+                        insertVideo(urlRoot);
                     }
                     else {
                         if (videoList.length == 0) {
@@ -324,7 +327,6 @@ var init = function () {
 function CreateButton(text,func,positionBtm){
     var btn=document.createElement("button");
     btn.type="button";
-    btn.onclick="";
     btn.innerHTML=text;
     btn.style=`
   position: fixed;
@@ -563,12 +565,12 @@ function videoShuffle(func) {
 function insertVideo(url) {
     debug('insertVideo');
             var video = document.createElement("video");
-            video.style = 'width:100%';
+            video.style = 'height:100%';
             video.src = url;
             video.autoplay = true;
             video.muted=true;
     var div = document.createElement("div");
-    div.style = "width:100%;    position: fixed;    top: 0;    left: 0;    z-index: -100;";
+    div.style = "height:100%;    position: fixed;    top: 0;    left: 0;    z-index: -100;";
     div.insertBefore(video, null);
     debug(url);
     document.body.insertBefore(div, null);
