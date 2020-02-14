@@ -18,7 +18,7 @@
 // @exclude     *://*.swf
 // @exclude     *://*.pdf
 // @exclude     https://anime1.me
-// @version     1.93
+// @version     1.94
 // @grant       GM_xmlhttpRequest
 // @grant         GM_registerMenuCommand
 // @grant         GM_setValue
@@ -565,12 +565,12 @@ function videoShuffle(func) {
 function insertVideo(url) {
     debug('insertVideo');
             var video = document.createElement("video");
-            video.style = 'height:100%';
+            video.style = 'width:100%';
             video.src = url;
             video.autoplay = true;
             video.muted=true;
     var div = document.createElement("div");
-    div.style = "height:100%;    position: fixed;    top: 0;    left: 0;    z-index: -100;";
+    div.style = "width:100%;    position: fixed;    top: 0;    left: 0;    z-index: -100;";
     div.insertBefore(video, null);
     debug(url);
     document.body.insertBefore(div, null);
